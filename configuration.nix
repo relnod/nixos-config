@@ -25,13 +25,12 @@
   # boot.loader.efi.efiSysMountPoint = "/boot/efi";
   # Define on which hard drive you want to install Grub.
   
-  boot.initrd.luks.devices = [
-    {
-      name = "root";
+  boot.initrd.luks.devices = {
+    root = {
       device = "/dev/disk/by-uuid/4b84f7ef-1c48-44c9-957e-42ab3c238638";
       allowDiscards = true;
-    }
-  ];
+    };
+  };
 
   networking.hostName = "noone"; # Define your hostname.
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -54,9 +53,9 @@
   # Select internationalisation properties.
   i18n = {
     # consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "de";
     defaultLocale = "en_US.UTF-8";
   };
+  # console.keyMap = "de";
 
   # Set time zone.
   time.timeZone = "Europe/Amsterdam";
@@ -64,19 +63,41 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+   mumble
+   # torbrowser
+   keychain
+   nix-prefetch-git
+   nodejs
+   ntfs3g
+   gparted
+   yarn
+   tmux
+   htop
+   tmuxinator
+   feh
+   envsubst
+   rofi
+   ripgrep
    wget
    vim
+   alacritty
+   gnumake
+   gnupg
    neovim
    thunderbird
    firefox
    chromium
    keepassxc
    gnome3.nautilus
+   gnome3.eog
    spotify
    go
+   unzip
    glib
    xclip
    git
+   pango
+   (import ./dotm.nix)
   ];
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "spotify"
@@ -121,7 +142,7 @@ hardware.pulseaudio = {
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
 
-  services.xserver.displayManager.slim.enable = true;
+  services.xserver.displayManager.lightdm.enable = true;
 
   # Enable the i3wm Window Manager.
   services.xserver.windowManager.i3.enable = true;
@@ -133,6 +154,10 @@ hardware.pulseaudio = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
   };
+
+  fonts.fonts = with pkgs; [
+    roboto-mono
+  ];
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
