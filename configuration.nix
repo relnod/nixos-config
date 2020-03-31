@@ -66,10 +66,10 @@
    mumble
    # torbrowser
    keychain
+   gimp
    nix-prefetch-git
    nodejs
-   ntfs3g
-   gparted
+   libreoffice
    yarn
    tmux
    htop
@@ -90,6 +90,7 @@
    keepassxc
    gnome3.nautilus
    gnome3.eog
+   gnome3.evince
    spotify
    go
    unzip
