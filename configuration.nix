@@ -4,6 +4,11 @@
 
 { config, lib, pkgs, ... }:
 
+let
+  unstableTarball =
+    fetchTarball
+      https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz;
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -46,6 +51,9 @@
   networking.interfaces.wlp4s0.useDHCP = true;
   networking.interfaces.wwp0s20f0u3i12.useDHCP = true;
 
+  virtualisation.docker.enable = true;
+  virtualisation.lxd.enable = true;
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -60,45 +68,56 @@
   # Set time zone.
   time.timeZone = "Europe/Amsterdam";
 
+  nixpkgs.config = {
+    packageOverrides = pkgs: {
+      unstable = import unstableTarball {
+        config = config.nixpkgs.config;
+      };
+    };
+  };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-   mumble
-   # torbrowser
-   keychain
-   gimp
-   nix-prefetch-git
-   nodejs
-   libreoffice
-   yarn
-   tmux
-   htop
-   tmuxinator
-   feh
-   envsubst
-   rofi
-   ripgrep
-   wget
-   vim
-   alacritty
-   gnumake
-   gnupg
-   neovim
-   thunderbird
-   firefox
-   chromium
-   keepassxc
-   gnome3.nautilus
-   gnome3.eog
-   gnome3.evince
-   spotify
-   go
-   unzip
-   glib
-   xclip
-   git
-   pango
-   (import ./dotm.nix)
+    mumble
+    keychain
+    gimp
+    nix-prefetch-git
+    nodejs
+    playerctl
+    libreoffice
+    yarn
+    tmux
+    htop
+    tmuxinator
+    feh
+    envsubst
+    rofi
+    ripgrep
+    wget
+    vim
+    alacritty
+    gnumake
+    gnupg
+    unstable.neovim
+    thunderbird
+    firefox
+    chromium
+    keepassxc
+    gnome3.nautilus
+    gnome3.eog
+    gnome3.evince
+    spotify
+    go
+    unzip
+    glib
+    xclip
+    git
+    pango
+    unstable.torbrowser
+    (python35.withPackages(ps: with ps; [ pynvim ]))
+    (python27.withPackages(ps: with ps; [ pynvim ]))
+    (import ./dotm.nix)
   ];
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "spotify"
@@ -127,7 +146,7 @@
 
   # Enable sound.
   sound.enable = true;
-hardware.pulseaudio = {
+  hardware.pulseaudio = {
     enable = true;
 
     # NixOS allows either a lightweight build (default) or full build of PulseAudio to be installed.
@@ -153,7 +172,7 @@ hardware.pulseaudio = {
   # Define user account.
   users.users.pablo = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "docker" ];
   };
 
   fonts.fonts = with pkgs; [
@@ -165,6 +184,5 @@ hardware.pulseaudio = {
   # servers. You should change this only after NixOS release notes say you
   # should.
   system.stateVersion = "19.09"; # Did you read the comment?
-
 }
 
