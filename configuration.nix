@@ -79,45 +79,57 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    # Applications
     mumble
-    keychain
     gimp
-    nix-prefetch-git
-    nodejs
-    playerctl
     libreoffice
-    yarn
-    tmux
-    htop
-    tmuxinator
-    feh
-    envsubst
-    rofi
-    ripgrep
-    wget
-    vim
-    alacritty
-    gnumake
-    gnupg
-    unstable.neovim
+    gnome3.nautilus # File Explorer
+    gnome3.eog # Image Viewer
+    gnome3.evince # Pdf Viewer
     thunderbird
     firefox
     chromium
-    keepassxc
-    gnome3.nautilus
-    gnome3.eog
-    gnome3.evince
-    spotify
-    go
-    unzip
-    glib
-    xclip
-    git
-    pango
     unstable.torbrowser
+    keepassxc
+    spotify
+
+    # Audio
+    paprefs
+    pavucontrol
+    gnome3.dconf
+
+    # For i3wm
+    feh # Needed for the background image
+    playerctl
+    rofi
+    pango # Neede for fonts
+
+    # Utils
+    gnupg
+    unzip
+
+    # Terminal
+    alacritty # Terminal Emulator
+    nodejs
+    yarn
+    go
+    git
+    keychain
+    bat
+    docker-compose
+    tmux
+    tmuxinator
+    htop
+    envsubst
+    ripgrep
+    wget
+    gnumake
+    (import ./dotm.nix)
+    vim
+    unstable.neovim
     (python35.withPackages(ps: with ps; [ pynvim ]))
     (python27.withPackages(ps: with ps; [ pynvim ]))
-    (import ./dotm.nix)
+    xclip
   ];
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "spotify"
