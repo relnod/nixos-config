@@ -82,6 +82,7 @@ in
     # Applications
     mumble
     gimp
+    inkscape
     libreoffice
     gnome3.nautilus # File Explorer
     gnome3.eog # Image Viewer
@@ -92,6 +93,7 @@ in
     unstable.torbrowser
     keepassxc
     spotify
+    strawberry
 
     # Audio
     paprefs
@@ -107,6 +109,7 @@ in
     # Utils
     gnupg
     unzip
+    udiskie # For (u)mounting file systems
 
     # Terminal
     alacritty # Terminal Emulator
@@ -135,7 +138,7 @@ in
     "spotify"
   ];
 
-
+  programs.light.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -175,6 +178,9 @@ in
   services.xserver.libinput.enable = true;
 
   services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.displayManager.sessionCommands = ''
+    udiskie -s &
+  '';
 
   # Enable the i3wm Window Manager.
   services.xserver.windowManager.i3.enable = true;
@@ -184,7 +190,7 @@ in
   # Define user account.
   users.users.pablo = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" ];
+    extraGroups = [ "wheel" "docker" "video" ];
   };
 
   fonts.fonts = with pkgs; [
