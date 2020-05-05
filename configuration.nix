@@ -88,6 +88,7 @@ in
     gnome3.eog # Image Viewer
     gnome3.evince # Pdf Viewer
     thunderbird
+    tdesktop
     firefox
     chromium
     unstable.torbrowser
@@ -102,14 +103,15 @@ in
 
     # For i3wm
     feh # Needed for the background image
-    playerctl
     rofi
     pango # Neede for fonts
+    scrot # For screen capture
 
     # Utils
     gnupg
     unzip
     udiskie # For (u)mounting file systems
+    usbutils
 
     # Terminal
     alacritty # Terminal Emulator
