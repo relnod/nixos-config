@@ -2,17 +2,17 @@ with import <nixpkgs> {};
 
 buildGoModule rec {
   pname = "dotm";
-  version = "0.5.0-5d1d0fe43ffcf3a6f9667406e0f42fa1c230537a";
+  version = "0.5.0-d8b14f9772e8f2226a8afc0ba705b00db7c52e92";
 
   src = fetchFromGitHub {
     owner = "relnod";
     repo = "dotm";
     # rev = "v${version}";
-    rev = "5d1d0fe43ffcf3a6f9667406e0f42fa1c230537a";
-    sha256 = "1xv6ahlpscdpz1l3545c7ljcdg6mfrvnlnvs04mfyn770hk9fsbm";
+    rev = "d8b14f9772e8f2226a8afc0ba705b00db7c52e92";
+    sha256 = "1phzkrvw4cl008qjf0yfpg1inwqg6rd8km1glaymjasgds8sql3m";
   };
 
-  modSha256 = "14q2ahll4ykkgi6lk46vzjn1fg7rf5ynryx4bmyy78zmwv6dz541";
+  modSha256 = "0kp9awxazh2wkgbv94f19fknq14yj9vk32jrf49ki9h24l8wisda";
 
   subPackages = [ "cmd/dotm" ];
 
