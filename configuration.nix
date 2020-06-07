@@ -89,6 +89,7 @@ in
     gnome3.evince # Pdf Viewer
     thunderbird
     tdesktop
+    signal-desktop
     firefox
     chromium
     unstable.torbrowser
