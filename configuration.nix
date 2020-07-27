@@ -39,6 +39,10 @@ in
 
   networking.hostName = "noone"; # Define your hostname.
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.wireless.extraConfig = ''
+    ctrl_interface=/run/wpa_supplicant
+    ctrl_interface_group=wheel
+  '';
   hardware.bluetooth.enable = true;
 
   services.blueman.enable = true;
@@ -74,6 +78,7 @@ in
         config = config.nixpkgs.config;
       };
     };
+    android_sdk.accept_license = true;
   };
 
   # List packages installed in system profile. To search, run:
@@ -96,6 +101,7 @@ in
     keepassxc
     spotify
     strawberry
+    wpa_supplicant_gui
 
     # Audio
     paprefs
@@ -112,6 +118,11 @@ in
     unzip
     udiskie # For (u)mounting file systems
     usbutils
+    zip
+
+    # Android
+    androidenv.androidPkgs_9_0.platform-tools
+    androidenv.androidPkgs_9_0.androidsdk
 
     # Terminal
     alacritty # Terminal Emulator
@@ -143,6 +154,8 @@ in
 
   programs.light.enable = true;
   programs.gnupg.agent.enable = true;
+
+  programs.adb.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
