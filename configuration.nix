@@ -29,7 +29,9 @@ in
   # boot.loader.grub.efiInstallAsRemovable = true;
   # boot.loader.efi.efiSysMountPoint = "/boot/efi";
   # Define on which hard drive you want to install Grub.
-  
+  boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
+  boot.kernel.sysctl = { "net.ipv4.ip_forward" = 1; };
+
   boot.initrd.luks.devices = {
     root = {
       device = "/dev/disk/by-uuid/4b84f7ef-1c48-44c9-957e-42ab3c238638";
@@ -43,6 +45,12 @@ in
     ctrl_interface=/run/wpa_supplicant
     ctrl_interface_group=wheel
   '';
+  networking = {
+    firewall = {
+      checkReversePath = false; # Needed for the virtual network used by whonix
+    };
+  };
+
   hardware.bluetooth.enable = true;
 
   services.blueman.enable = true;
@@ -57,6 +65,8 @@ in
 
   virtualisation.docker.enable = true;
   virtualisation.lxd.enable = true;
+
+  virtualisation.libvirtd.enable = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -102,6 +112,7 @@ in
     spotify
     strawberry
     wpa_supplicant_gui
+    virt-manager
 
     # Audio
     paprefs
@@ -136,6 +147,8 @@ in
     tmux
     tmuxinator
     htop
+    kubectl
+    prometheus
     envsubst
     ripgrep
     wget
@@ -207,7 +220,7 @@ in
   # Define user account.
   users.users.pablo = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "video" ];
+    extraGroups = [ "wheel" "docker" "video" "libvirtd" ];
   };
 
   fonts.fonts = with pkgs; [
