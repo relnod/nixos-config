@@ -29,8 +29,8 @@ in
   # boot.loader.grub.efiInstallAsRemovable = true;
   # boot.loader.efi.efiSysMountPoint = "/boot/efi";
   # Define on which hard drive you want to install Grub.
-  boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
   boot.kernel.sysctl = { "net.ipv4.ip_forward" = 1; };
+  boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
 
   boot.initrd.luks.devices = {
     root = {
@@ -39,48 +39,61 @@ in
     };
   };
 
-  networking.hostName = "noone"; # Define your hostname.
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.wireless.extraConfig = ''
-    ctrl_interface=/run/wpa_supplicant
-    ctrl_interface_group=wheel
-  '';
-  networking = {
-    firewall = {
-      checkReversePath = false; # Needed for the virtual network used by whonix
-    };
-  };
-
-  hardware.bluetooth.enable = true;
-
-  services.blueman.enable = true;
-
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
-  # replicates the default behaviour.
-  networking.useDHCP = false;
+  # replicates the default behaviour.  networking.useDHCP = false;
+  # To list devices:
+  # $ ifconfig -a
   networking.interfaces.enp0s31f6.useDHCP = true;
   networking.interfaces.wlp4s0.useDHCP = true;
   networking.interfaces.wwp0s20f0u3i12.useDHCP = true;
 
-  virtualisation.docker.enable = true;
-  virtualisation.lxd.enable = true;
+  networking.hostName = "noone"; # Define your hostname.
 
-  virtualisation.libvirtd.enable = true;
+  # networking.networkmanager.enable = true;
+  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  # Disables checkReversePath. This is needed for the virtual network used by
+  # whonix.
+  networking.firewall.checkReversePath = false;
+
+  # Open ports in the firewall.
+  # networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  # Select internationalisation properties.
-  i18n = {
-    # consoleFont = "Lat2-Terminus16";
-    defaultLocale = "en_US.UTF-8";
+  # Enable bluetooth
+  hardware.bluetooth.enable = true;
+  # Bluetooth gui/applet.
+  services.blueman.enable = true;
+
+
+  # Enable sound.
+  sound.enable = true;
+  hardware.pulseaudio = {
+    enable = true;
+
+    # NixOS allows either a lightweight build (default) or full build of PulseAudio to be installed.
+    # Only the full build has Bluetooth support, so it must be selected here.
+    package = pkgs.pulseaudioFull;
   };
-  # console.keyMap = "de";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
 
   # Set time zone.
   time.timeZone = "Europe/Amsterdam";
+
+  # Enable virtualisation.
+  virtualisation.docker.enable = true;
+  virtualisation.lxd.enable = true;
+  virtualisation.libvirtd.enable = true;
+
 
   nixpkgs.config = {
     packageOverrides = pkgs: {
@@ -88,7 +101,12 @@ in
         config = config.nixpkgs.config;
       };
     };
+
     android_sdk.accept_license = true;
+
+    allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+      "spotify"
+    ];
   };
 
   # List packages installed in system profile. To search, run:
@@ -104,7 +122,7 @@ in
     gnome3.evince # Pdf Viewer
     thunderbird
     tdesktop
-    signal-desktop
+    unstable.signal-desktop
     firefox
     chromium
     unstable.torbrowser
@@ -153,18 +171,18 @@ in
     ripgrep
     wget
     gnumake
-    (import ./dotm.nix)
-    (import ./efm-language-server.nix)
+    # (import ./dotm.nix)
+    # (import ./efm-language-server.nix)
     vim
     unstable.neovim
-    (python35.withPackages(ps: with ps; [ pynvim ]))
+    (python39.withPackages(ps: with ps; [ pynvim ]))
     (python27.withPackages(ps: with ps; [ pynvim ]))
     xclip
-  ];
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "spotify"
+    jq
   ];
 
+  # Enable light program. This can be used to controll hardware lights (screen,
+  # keyboard, ...).
   programs.light.enable = true;
   programs.gnupg.agent.enable = true;
 
@@ -180,24 +198,8 @@ in
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
   # Enable CUPS to print documents.
   # services.printing.enable = true;
-
-  # Enable sound.
-  sound.enable = true;
-  hardware.pulseaudio = {
-    enable = true;
-
-    # NixOS allows either a lightweight build (default) or full build of PulseAudio to be installed.
-    # Only the full build has Bluetooth support, so it must be selected here.
-    package = pkgs.pulseaudioFull;
-  };
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -208,12 +210,18 @@ in
   services.xserver.libinput.enable = true;
 
   services.xserver.displayManager.lightdm.enable = true;
+  # Run udiskie as daemon, to enable auto mounting usb sticks.
   services.xserver.displayManager.sessionCommands = ''
     udiskie -s &
   '';
 
   # Enable the i3wm Window Manager.
   services.xserver.windowManager.i3.enable = true;
+
+  services.redshift = {
+    enable = true;
+  };
+  location.provider = "geoclue2";
 
   services.openssh.enable = true;
 
@@ -231,5 +239,5 @@ in
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
   # should.
-  system.stateVersion = "20.03"; # Did you read the comment?
+  system.stateVersion = "20.09"; # Did you read the comment?
 }
