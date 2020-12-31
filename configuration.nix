@@ -2,6 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+with import <nixpkgs> { overlays = [
+  (import (builtins.fetchTarball {
+    url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
+  }))
+]; };
+
 { config, lib, pkgs, ... }:
 
 let
@@ -58,6 +64,7 @@ in
   networking.firewall.checkReversePath = false;
 
   # Open ports in the firewall.
+  networking.firewall.allowedTCPPorts = [ 57621 ]; # For Spotify
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
@@ -94,7 +101,6 @@ in
   virtualisation.lxd.enable = true;
   virtualisation.libvirtd.enable = true;
 
-
   nixpkgs.config = {
     packageOverrides = pkgs: {
       unstable = import unstableTarball {
@@ -108,7 +114,6 @@ in
       "spotify"
     ];
   };
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -142,6 +147,7 @@ in
     rofi
     pango # Neede for fonts
     scrot # For screen capture
+    xorg.xev
 
     # Utils
     unzip
@@ -174,7 +180,7 @@ in
     # (import ./dotm.nix)
     # (import ./efm-language-server.nix)
     vim
-    unstable.neovim
+    neovim-nightly
     (python39.withPackages(ps: with ps; [ pynvim ]))
     (python27.withPackages(ps: with ps; [ pynvim ]))
     xclip
