@@ -164,6 +164,7 @@ in
     nodejs
     yarn
     go
+    golint
     git
     keychain
     bat
@@ -177,10 +178,13 @@ in
     ripgrep
     wget
     gnumake
+    gcc
+    clang
+    ninja
     # (import ./dotm.nix)
-    # (import ./efm-language-server.nix)
     vim
     neovim-nightly
+    rnix-lsp
     (python39.withPackages(ps: with ps; [ pynvim ]))
     (python27.withPackages(ps: with ps; [ pynvim ]))
     xclip
