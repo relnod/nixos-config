@@ -176,17 +176,22 @@ in
     prometheus
     envsubst
     ripgrep
+    fd
     wget
     gnumake
     gcc
     clang
     ninja
+    fzf
+    fzy
     # (import ./dotm.nix)
+    (import ./lua-language-server.nix)
     vim
     neovim-nightly
     rnix-lsp
-    (python39.withPackages(ps: with ps; [ pynvim ]))
+    (python38.withPackages(ps: with ps; [ pynvim matplotlib ]))
     (python27.withPackages(ps: with ps; [ pynvim ]))
+    python38Packages.pip
     xclip
     jq
   ];
