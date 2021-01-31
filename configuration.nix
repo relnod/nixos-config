@@ -2,11 +2,17 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-with import <nixpkgs> { overlays = [
-  (import (builtins.fetchTarball {
-    url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
-  }))
-]; };
+with import <nixpkgs> {
+  overlays = [
+    (
+      import (
+        builtins.fetchTarball {
+          url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
+        }
+      )
+    )
+  ];
+};
 
 { config, lib, pkgs, ... }:
 
@@ -17,7 +23,8 @@ let
 in
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
 
@@ -55,9 +62,16 @@ in
   networking.interfaces.wwp0s20f0u3i12.useDHCP = true;
 
   networking.hostName = "noone"; # Define your hostname.
+  #networking.extraHosts =
+  #  ''
+  #     ip domain
+  #  '';
 
-  # networking.networkmanager.enable = true;
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.nameservers = [ "1.1.1.1" ];
+
+  networking.networkmanager.enable = true;
+  # networking.wireless.enable = true; # Enables wireless support via wpa_supplicant.
+
 
   # Disables checkReversePath. This is needed for the virtual network used by
   # whonix.
@@ -65,10 +79,7 @@ in
 
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [ 57621 ]; # For Spotify
-  # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -184,13 +195,15 @@ in
     ninja
     fzf
     fzy
+    sqlite
     # (import ./dotm.nix)
     (import ./lua-language-server.nix)
+    /* unstable.sumneko-lua-language-server */
     vim
     neovim-nightly
     rnix-lsp
-    (python38.withPackages(ps: with ps; [ pynvim matplotlib ]))
-    (python27.withPackages(ps: with ps; [ pynvim ]))
+    (python38.withPackages (ps: with ps; [ pynvim matplotlib ]))
+    (python27.withPackages (ps: with ps; [ pynvim ]))
     python38Packages.pip
     xclip
     jq
@@ -243,7 +256,7 @@ in
   # Define user account.
   users.users.pablo = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" "video" "libvirtd" ];
+    extraGroups = [ "wheel" "docker" "video" "networkmanager" "libvirtd" ];
   };
 
   fonts.fonts = with pkgs; [
