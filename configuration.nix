@@ -62,10 +62,10 @@ in
   networking.interfaces.wwp0s20f0u3i12.useDHCP = true;
 
   networking.hostName = "noone"; # Define your hostname.
-  #networking.extraHosts =
-  #  ''
-  #     ip domain
-  #  '';
+  # networking.extraHosts =
+  #   ''
+  #      ip domain
+  #   '';
 
   networking.nameservers = [ "1.1.1.1" ];
 
@@ -172,6 +172,7 @@ in
 
     # Terminal
     alacritty # Terminal Emulator
+    tree
     nodejs
     yarn
     go
@@ -260,7 +261,7 @@ in
   };
 
   fonts.fonts = with pkgs; [
-    roboto-mono
+    (nerdfonts.override { fonts = [ "RobotoMono" ]; })
   ];
 
   # This value determines the NixOS release with which your system is to be
