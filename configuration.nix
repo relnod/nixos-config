@@ -2,18 +2,6 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-with import <nixpkgs> {
-  overlays = [
-    (
-      import (
-        builtins.fetchTarball {
-          url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
-        }
-      )
-    )
-  ];
-};
-
 { config, lib, pkgs, ... }:
 
 let
@@ -123,31 +111,12 @@ in
 
     allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
       "spotify"
+      "zoom"
     ];
   };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    # Applications
-    mumble
-    gimp
-    inkscape
-    libreoffice
-    gnome3.nautilus # File Explorer
-    gnome3.eog # Image Viewer
-    gnome3.evince # Pdf Viewer
-    thunderbird
-    tdesktop
-    unstable.signal-desktop
-    firefox
-    chromium
-    unstable.torbrowser
-    keepassxc
-    spotify
-    strawberry
-    wpa_supplicant_gui
-    virt-manager
-
     # Audio
     paprefs
     pavucontrol
@@ -171,44 +140,38 @@ in
     androidenv.androidPkgs_9_0.androidsdk
 
     # Terminal
-    alacritty # Terminal Emulator
-    tree
     nodejs
     yarn
     go
     golint
     git
     keychain
-    bat
     docker-compose
     tmux
     tmuxinator
-    htop
     kubectl
     prometheus
     envsubst
-    ripgrep
-    fd
     wget
     gnumake
-    gcc
+    cmake
     clang
+    gdb
     ninja
-    fzf
-    fzy
-    sqlite
     # (import ./dotm.nix)
-    (import ./lua-language-server.nix)
-    /* unstable.sumneko-lua-language-server */
     vim
-    neovim-nightly
-    rnix-lsp
-    (python38.withPackages (ps: with ps; [ pynvim matplotlib ]))
-    (python27.withPackages (ps: with ps; [ pynvim ]))
+    (python38.withPackages (ps: with ps; [ matplotlib ]))
     python38Packages.pip
     xclip
-    jq
+
+    zoom
   ];
+
+  nix.package = pkgs.nixFlakes;
+  # Enable the nix 2.0 CLI and flakes support feature-flags
+  nix.extraOptions = ''
+    experimental-features = nix-command flakes
+  '';
 
   # Enable light program. This can be used to controll hardware lights (screen,
   # keyboard, ...).
@@ -246,11 +209,6 @@ in
 
   # Enable the i3wm Window Manager.
   services.xserver.windowManager.i3.enable = true;
-
-  services.redshift = {
-    enable = true;
-  };
-  location.provider = "geoclue2";
 
   services.openssh.enable = true;
 
